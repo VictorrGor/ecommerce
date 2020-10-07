@@ -15,6 +15,7 @@ from oscar.core.loading import get_model
 from ecommerce.core.url_utils import absolute_redirect
 from ecommerce.extensions.checkout.utils import add_currency
 from ecommerce.extensions.offer.constants import OFFER_ASSIGNED
+import ecommerce.extensions.offer.models as offer_models
 
 logger = logging.getLogger(__name__)
 
@@ -54,6 +55,21 @@ def get_discount_value(discount_percentage, product_price):
         float: Discount value
     """
     return discount_percentage * product_price / 100.0
+
+
+def create_offer_assignment_email_sent_record(enterprise_customer_uuid, template_id, email_type):
+    """
+    Create an instance of OfferAssignmentEmailSentRecord.
+    Arguments:
+        enterprise_customer_uuid (str): The uuid of the enterprise that sent the email
+        template_id (int): The id of the template used to send email
+        email_type (str): The type of the email sent e:g Assign, Remind or Revoke
+    """
+    offer_models.OfferAssignmentEmailSentRecord.objects.create(
+        enterprise_customer=enterprise_customer_uuid,
+        email_type=email_type,
+        template_id=template_id
+    )
 
 
 def get_benefit_type(benefit):

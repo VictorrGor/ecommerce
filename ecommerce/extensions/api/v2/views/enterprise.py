@@ -676,6 +676,7 @@ class EnterpriseCouponViewSet(CouponViewSet):
         subject = request.data.pop('template_subject', '')
         greeting = request.data.pop('template_greeting', '')
         closing = request.data.pop('template_closing', '')
+        template_id = request.data.pop('template_id', None)
 
         self._validate_email_fields(subject, greeting, closing)
 
@@ -686,6 +687,7 @@ class EnterpriseCouponViewSet(CouponViewSet):
                 'subject': subject,
                 'greeting': greeting,
                 'closing': closing,
+                'template_id': template_id,
             }
         )
         if serializer.is_valid():
@@ -759,11 +761,18 @@ class EnterpriseCouponViewSet(CouponViewSet):
         subject = request.data.pop('template_subject', '')
         greeting = request.data.pop('template_greeting', '')
         closing = request.data.pop('template_closing', '')
+        template_id = request.data.pop('template_id', None)
         self._validate_email_fields(subject, greeting, closing)
         serializer = CouponCodeRevokeSerializer(
             data=request.data.get('assignments'),
             many=True,
-            context={'coupon': coupon, 'subject': subject, 'greeting': greeting, 'closing': closing}
+            context={
+                'coupon': coupon,
+                'subject': subject,
+                'greeting': greeting,
+                'closing': closing,
+                'template_id': template_id,
+            }
         )
         if serializer.is_valid():
             serializer.save()
@@ -782,6 +791,7 @@ class EnterpriseCouponViewSet(CouponViewSet):
         subject = request.data.pop('template_subject', '')
         greeting = request.data.pop('template_greeting', '')
         closing = request.data.pop('template_closing', '')
+        template_id = request.data.pop('template_id', None)
         self._validate_email_fields(subject, greeting, closing)
         if request.data.get('assignments'):
             assignments = request.data.get('assignments')
@@ -811,7 +821,13 @@ class EnterpriseCouponViewSet(CouponViewSet):
         serializer = CouponCodeRemindSerializer(
             data=assignments,
             many=True,
-            context={'coupon': coupon, 'subject': subject, 'greeting': greeting, 'closing': closing}
+            context={
+                'coupon': coupon,
+                'subject': subject,
+                'greeting': greeting,
+                'closing': closing,
+                'template_id': template_id,
+            }
         )
         if serializer.is_valid():
             serializer.save()

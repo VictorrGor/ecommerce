@@ -1,3 +1,5 @@
+from django.utils.translation import ugettext_lazy as _
+
 DYNAMIC_DISCOUNT_FLAG = 'offer.dynamic_discount'
 
 # OfferAssignment status constants defined here to avoid circular dependency.
@@ -21,3 +23,11 @@ VOUCHER_IS_PRIVATE = 'private'
 
 OFFER_ASSIGNMENT_EMAIL_TEMPLATE_FIELD_LIMIT = 50000
 OFFER_ASSIGNMENT_EMAIL_SUBJECT_LIMIT = 1000
+
+# Email Template Types
+ASSIGN, REMIND, REVOKE = ('assign', 'remind', 'revoke')
+EMAIL_TEMPLATE_TYPES = (
+    (ASSIGN, _('Assign')),
+    (REMIND, _('Remind')),
+    (REVOKE, _('Revoke')),
+)

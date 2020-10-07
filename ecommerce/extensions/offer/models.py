@@ -25,6 +25,7 @@ from threadlocals.threadlocals import get_current_request
 
 from ecommerce.core.utils import get_cache_key, log_message_and_raise_validation_error
 from ecommerce.extensions.offer.constants import (
+    EMAIL_TEMPLATE_TYPES,
     OFFER_ASSIGNED,
     OFFER_ASSIGNMENT_EMAIL_BOUNCED,
     OFFER_ASSIGNMENT_EMAIL_PENDING,
@@ -586,13 +587,6 @@ class OfferAssignmentEmailAttempt(models.Model):
 
 
 class OfferAssignmentEmailTemplates(TimeStampedModel):
-    ASSIGN, REMIND, REVOKE = ('assign', 'remind', 'revoke')
-    EMAIL_TEMPLATE_TYPES = (
-        (ASSIGN, _('Assign')),
-        (REMIND, _('Remind')),
-        (REVOKE, _('Revoke')),
-    )
-
     enterprise_customer = models.UUIDField(help_text=_('UUID for an EnterpriseCustomer from the Enterprise Service.'))
     email_type = models.CharField(max_length=32, choices=EMAIL_TEMPLATE_TYPES)
     email_greeting = models.TextField(blank=True, null=True)
@@ -615,6 +609,24 @@ class OfferAssignmentEmailTemplates(TimeStampedModel):
             ec=self.enterprise_customer,
             email_type=self.email_type,
             active=self.active
+        )
+
+
+class OfferAssignmentEmailSentRecord(TimeStampedModel):
+    enterprise_customer = models.UUIDField(help_text=_('UUID for an EnterpriseCustomer from the Enterprise Service.'))
+    email_type = models.CharField(max_length=32, choices=EMAIL_TEMPLATE_TYPES)
+    template = models.ForeignKey(
+        'offer.OfferAssignmentEmailTemplates',
+        null=True,
+        blank=True,
+        on_delete=models.CASCADE,
+        help_text=_('The ID of the template used to send email.')
+    )
+
+    def __str__(self):
+        return "{ec}-{email_type}".format(
+            ec=self.enterprise_customer,
+            email_type=self.email_type,
         )
 
 
